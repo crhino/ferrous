@@ -34,3 +34,11 @@ pub fn equal<'a, E>(expected: &'a E) -> Equals<'a, E> {
 pub fn contain<'a, E>(expected: &'a E) -> Contain<'a, E> {
     Contain::new(expected)
 }
+
+pub fn be_some() -> OptionMatcher {
+    OptionMatcher::SomeMatch
+}
+
+pub fn be_none() -> OptionMatcher {
+    OptionMatcher::NoneMatch
+}

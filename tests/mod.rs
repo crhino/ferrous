@@ -59,3 +59,43 @@ fn test_expect_to_contain_panic() {
     let actual = vec![1, 2, 3, 4, 5];
     expect(&actual).not_to(contain(&1u8));
 }
+
+#[test]
+fn test_expect_to_some() {
+    let actual = Some(TestEnum::Pass);
+    expect(&actual).to(be_some());
+}
+
+#[test]
+#[should_panic(expected="expected Some variant, found None")]
+fn test_expect_to_some_panic() {
+    let actual: Option<TestEnum> = None;
+    expect(&actual).to(be_some());
+}
+
+#[test]
+#[should_panic(expected="expected None variant, found Some(Pass)")]
+fn test_expect_not_to_some_panic() {
+    let actual: Option<TestEnum> = Some(TestEnum::Pass);
+    expect(&actual).not_to(be_some());
+}
+
+#[test]
+fn test_expect_to_none() {
+    let actual: Option<TestEnum> = None;
+    expect(&actual).to(be_none());
+}
+
+#[test]
+#[should_panic(expected="expected None variant, found Some(Pass)")]
+fn test_expect_to_none_panic() {
+    let actual: Option<TestEnum> = Some(TestEnum::Pass);
+    expect(&actual).to(be_none());
+}
+
+#[test]
+#[should_panic(expected="expected Some variant, found None")]
+fn test_expect_not_to_none_panic() {
+    let actual: Option<TestEnum> = None;
+    expect(&actual).not_to(be_none());
+}
