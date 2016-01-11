@@ -1,4 +1,6 @@
-use dsl::*;
+extern crate ferrous;
+
+use ferrous::dsl::*;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 enum TestEnum {
