@@ -42,3 +42,11 @@ pub fn be_some() -> OptionMatcher {
 pub fn be_none() -> OptionMatcher {
     OptionMatcher::NoneMatch
 }
+
+pub fn be_ok() -> ResultMatcher {
+    ResultMatcher::OkMatch
+}
+
+pub fn be_err() -> ResultMatcher {
+    ResultMatcher::ErrMatch
+}

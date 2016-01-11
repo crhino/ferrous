@@ -99,3 +99,43 @@ fn test_expect_not_to_none_panic() {
     let actual: Option<TestEnum> = None;
     expect(&actual).not_to(be_none());
 }
+
+#[test]
+fn test_expect_to_ok() {
+    let actual: Result<TestEnum, TestEnum> = Ok(TestEnum::Pass);
+    expect(&actual).to(be_ok());
+}
+
+#[test]
+#[should_panic(expected="expected Ok variant, found Err(Fail)")]
+fn test_expect_to_ok_panic() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
+    expect(&actual).to(be_ok());
+}
+
+#[test]
+#[should_panic(expected="expected Err variant, found Ok(Pass)")]
+fn test_expect_not_to_ok_panic() {
+    let actual: Result<TestEnum, TestEnum> = Ok(TestEnum::Pass);
+    expect(&actual).not_to(be_ok());
+}
+
+#[test]
+fn test_expect_to_err() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
+    expect(&actual).to(be_err());
+}
+
+#[test]
+#[should_panic(expected="expected Err variant, found Ok(Pass)")]
+fn test_expect_to_err_panic() {
+    let actual: Result<TestEnum, TestEnum> = Ok(TestEnum::Pass);
+    expect(&actual).to(be_err());
+}
+
+#[test]
+#[should_panic(expected="expected Ok variant, found Err(Fail)")]
+fn test_expect_not_to_err_panic() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
+    expect(&actual).not_to(be_err());
+}
