@@ -46,3 +46,16 @@ fn test_expect_to_custom_panic() {
     let actual = TestEnum::Fail;
     expect(&actual).to(equal(&TestEnum::Pass));
 }
+
+#[test]
+fn test_expect_to_contain() {
+    let actual = vec![1, 2, 3, 4, 5];
+    expect(&actual).to(contain(&1u8));
+}
+
+#[test]
+#[should_panic]
+fn test_expect_to_contain_panic() {
+    let actual = vec![1, 2, 3, 4, 5];
+    expect(&actual).not_to(contain(&1u8));
+}

@@ -13,16 +13,16 @@ impl<'a, E> Equals<'a, E> {
     }
 }
 
-impl<'a, E: Debug + PartialEq> Matcher<E> for Equals<'a, E> {
-    fn matches(&self, actual: &E) -> bool {
+impl<'a, 'e, E: Debug + PartialEq> Matcher<&'e E> for Equals<'a, E> {
+    fn matches(&self, actual: &'e E) -> bool {
         self.expected == actual
     }
 
-    fn failure_message(&self, actual: &E) -> String {
+    fn failure_message(&self, actual: &'e E) -> String {
         format!("expected {:?} to equal {:?}", self.expected, actual)
     }
 
-    fn negated_failure_message(&self, actual: &E) -> String {
+    fn negated_failure_message(&self, actual: &'e E) -> String {
         format!("expected {:?} not to equal {:?}", self.expected, actual)
     }
 }

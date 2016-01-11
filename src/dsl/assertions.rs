@@ -12,14 +12,14 @@ impl<'a, A> Expect<'a, A> {
     }
 }
 
-impl<'a, A> Assertion<A> for Expect<'a, A> {
-    fn to<M: Matcher<A>>(self, matcher: M) {
+impl<'a, A: 'a> Assertion<'a, A> for Expect<'a, A> {
+    fn to<M: Matcher<&'a A>>(self, matcher: M) {
         if !matcher.matches(self.actual) {
             panic!(matcher.failure_message(self.actual));
         }
     }
 
-    fn not_to<M: Matcher<A>>(self, matcher: M) {
+    fn not_to<M: Matcher<&'a A>>(self, matcher: M) {
         if matcher.matches(self.actual) {
             panic!(matcher.negated_failure_message(self.actual));
         }
