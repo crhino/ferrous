@@ -2,3 +2,6 @@
 name = "ferrous"
 version = "0.1.0"
 authors = ["crhino <piraino.chris@gmail.com>"]
+
+[dependencies]
+time = "^0.1"

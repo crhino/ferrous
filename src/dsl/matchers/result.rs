@@ -7,15 +7,15 @@ pub enum ResultMatcher {
     ErrMatch,
 }
 
-impl<'a, 'e, E: Debug, O: Debug> Matcher<&'e Result<O, E>> for ResultMatcher {
-    fn matches(&self, actual: &'e Result<O, E>) -> bool {
+impl<E: Debug, O: Debug> Matcher<Result<O, E>> for ResultMatcher {
+    fn matches(&self, actual: &Result<O, E>) -> bool {
         match *self {
             ResultMatcher::ErrMatch => actual.is_err(),
             ResultMatcher::OkMatch => actual.is_ok(),
         }
     }
 
-    fn failure_message(&self, actual: &'e Result<O, E>) -> String {
+    fn failure_message(&self, actual: &Result<O, E>) -> String {
         match *self {
             ResultMatcher::ErrMatch => {
                 format!("expected Err variant, found {:?}", actual)
@@ -26,7 +26,7 @@ impl<'a, 'e, E: Debug, O: Debug> Matcher<&'e Result<O, E>> for ResultMatcher {
         }
     }
 
-    fn negated_failure_message(&self, actual: &'e Result<O, E>) -> String {
+    fn negated_failure_message(&self, actual: &Result<O, E>) -> String {
         match *self {
             ResultMatcher::ErrMatch => { format!("expected Ok variant, found {:?}", actual)
             },

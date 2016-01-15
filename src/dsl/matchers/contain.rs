@@ -1,5 +1,4 @@
 use std::fmt::Debug;
-use std::iter::Iterator;
 use dsl::Matcher;
 
 pub struct Contain<'a, E: 'a> {
@@ -14,8 +13,9 @@ impl<'a, E> Contain<'a, E> {
     }
 }
 
-impl<'a, 'b, E: Debug + PartialEq<T>, I: IntoIterator<Item=&'b T>, T: 'b> Matcher<I> for Contain<'a, E> {
-    fn matches(&self, actual: I) -> bool {
+impl<'c, E: Debug + PartialEq<T>, I, T> Matcher<I> for Contain<'c, E>
+where for<'a> &'a I: IntoIterator<Item=&'a T> {
+    fn matches(&self, actual: &I) -> bool {
         for a in actual {
             if self.expected.eq(&a) {
                 return true
@@ -25,11 +25,11 @@ impl<'a, 'b, E: Debug + PartialEq<T>, I: IntoIterator<Item=&'b T>, T: 'b> Matche
         false
     }
 
-    fn failure_message(&self, _actual: I) -> String {
+    fn failure_message(&self, _actual: &I) -> String {
         format!("expected to find {:?} in iterator", self.expected)
     }
 
-    fn negated_failure_message(&self, _actual: I) -> String {
+    fn negated_failure_message(&self, _actual: &I) -> String {
         format!("expected not to find {:?} in iterator", self.expected)
     }
 }

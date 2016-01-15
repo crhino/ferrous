@@ -7,15 +7,15 @@ pub enum OptionMatcher {
     NoneMatch,
 }
 
-impl<'a, 'e, E: Debug> Matcher<&'e Option<E>> for OptionMatcher {
-    fn matches(&self, actual: &'e Option<E>) -> bool {
+impl<E: Debug> Matcher<Option<E>> for OptionMatcher {
+    fn matches(&self, actual: &Option<E>) -> bool {
         match *self {
             OptionMatcher::SomeMatch => actual.is_some(),
             OptionMatcher::NoneMatch => actual.is_none(),
         }
     }
 
-    fn failure_message(&self, actual: &'e Option<E>) -> String {
+    fn failure_message(&self, actual: &Option<E>) -> String {
         match *self {
             OptionMatcher::SomeMatch => {
                 format!("expected Some variant, found {:?}", actual)
@@ -26,7 +26,7 @@ impl<'a, 'e, E: Debug> Matcher<&'e Option<E>> for OptionMatcher {
         }
     }
 
-    fn negated_failure_message(&self, actual: &'e Option<E>) -> String {
+    fn negated_failure_message(&self, actual: &Option<E>) -> String {
         match *self {
             OptionMatcher::SomeMatch => { format!("expected None variant, found {:?}", actual)
             },

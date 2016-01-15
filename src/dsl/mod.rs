@@ -4,16 +4,33 @@ mod assertions;
 use dsl::assertions::*;
 use dsl::matchers::*;
 
-pub trait Assertion<'a, A: 'a>: Sized {
-    fn to<M: Matcher<&'a A>>(self, matcher: M);
+pub trait Assertion<A> {
+    fn to<M: Matcher<A>>(self, matcher: M);
 
-    fn not_to<M: Matcher<&'a A>>(self, matcher: M);
+    fn not_to<M: Matcher<A>>(self, matcher: M);
+}
+
+/// Trait mapping to/not_to to should/should_not for better readability.
+pub trait AsyncAssertion<A> {
+    fn should<M: Matcher<A>>(self, matcher: M);
+
+    fn should_not<M: Matcher<A>>(self, matcher: M);
+}
+
+impl<A, B> AsyncAssertion<A> for B where B: Assertion<A> {
+    fn should<M: Matcher<A>>(self, matcher: M) {
+        self.to(matcher);
+    }
+
+    fn should_not<M: Matcher<A>>(self, matcher: M) {
+        self.not_to(matcher);
+    }
 }
 
 pub trait Matcher<A> {
-    fn matches(&self, actual: A) -> bool;
-    fn failure_message(&self, actual: A) -> String;
-    fn negated_failure_message(&self, actual: A) -> String;
+    fn matches(&self, actual: &A) -> bool;
+    fn failure_message(&self, actual: &A) -> String;
+    fn negated_failure_message(&self, actual: &A) -> String;
 }
 
 
