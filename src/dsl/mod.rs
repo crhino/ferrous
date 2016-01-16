@@ -39,18 +39,25 @@ pub fn expect<'a, A>(actual: &'a A) -> Expect<'a, A> {
     Expect::new(actual)
 }
 
-pub fn eventually<F, A>(f: F) -> Eventually<A> where F: 'static + Fn() -> A {
+pub fn eventually<F, A>(f: F) -> Async<A> where F: 'static + Fn() -> A {
     let timeout = Duration::seconds(1);
     eventually_with_timeout(timeout, f)
 }
 
 pub fn eventually_with_timeout<F, A>(timeout: Duration, f: F)
--> Eventually<A> where F: 'static + Fn() -> A {
-    Eventually::new(timeout, f)
+-> Async<A> where F: 'static + Fn() -> A {
+    Async::new(AsyncType::Eventual, timeout, f)
 }
 
-// pub fn consistently<F, A>(f: F) -> Consistently<A> where F: Fn() -> A {
-// }
+pub fn consistently<F, A>(f: F) -> Async<A> where F: 'static + Fn() -> A {
+    let timeout = Duration::seconds(1);
+    consistently_with_timeout(timeout, f)
+}
+
+pub fn consistently_with_timeout<F, A>(timeout: Duration, f: F)
+-> Async<A> where F: 'static + Fn() -> A {
+    Async::new(AsyncType::Consistent, timeout, f)
+}
 
 pub fn equal<'a, E>(expected: &'a E) -> Equals<'a, E> {
     Equals::new(expected)

@@ -158,3 +158,22 @@ fn test_eventually_should_not_err_panic() {
         actual.clone()
     }).should_not(be_err());
 }
+
+#[test]
+fn test_consistently_should_err() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Pass);
+
+    consistently(move || {
+        actual.clone()
+    }).should(be_err());
+}
+
+#[test]
+#[should_panic(expected="expected Ok variant, found Err(Fail)")]
+fn test_consistently_should_not_err_panic() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
+
+    consistently(move || {
+        actual.clone()
+    }).should_not(be_err());
+}
