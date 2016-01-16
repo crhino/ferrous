@@ -1,6 +1,7 @@
 mod matchers;
 mod assertions;
 
+use time::Duration;
 use dsl::assertions::*;
 use dsl::matchers::*;
 
@@ -38,8 +39,15 @@ pub fn expect<'a, A>(actual: &'a A) -> Expect<'a, A> {
     Expect::new(actual)
 }
 
-// pub fn eventually<F, A>(f: F) -> Eventually<A> where F: Fn() -> A {
-// }
+pub fn eventually<F, A>(f: F) -> Eventually<A> where F: 'static + Fn() -> A {
+    let timeout = Duration::seconds(1);
+    eventually_with_timeout(timeout, f)
+}
+
+pub fn eventually_with_timeout<F, A>(timeout: Duration, f: F)
+-> Eventually<A> where F: 'static + Fn() -> A {
+    Eventually::new(timeout, f)
+}
 
 // pub fn consistently<F, A>(f: F) -> Consistently<A> where F: Fn() -> A {
 // }

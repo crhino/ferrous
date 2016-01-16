@@ -139,3 +139,22 @@ fn test_expect_not_to_err_panic() {
     let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
     expect(&actual).not_to(be_err());
 }
+
+#[test]
+fn test_eventually_should_err() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Pass);
+
+    eventually(move || {
+        actual.clone()
+    }).should(be_err());
+}
+
+#[test]
+#[should_panic(expected="expected Ok variant, found Err(Fail)")]
+fn test_eventually_should_not_err_panic() {
+    let actual: Result<TestEnum, TestEnum> = Err(TestEnum::Fail);
+
+    eventually(move || {
+        actual.clone()
+    }).should_not(be_err());
+}
