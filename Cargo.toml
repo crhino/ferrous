@@ -3,5 +3,14 @@ name = "ferrous"
 version = "0.1.0"
 authors = ["crhino <piraino.chris@gmail.com>"]
 
+description = "Rust test matcher library"
+
+repository = "https://github.com/crhino/ferrous"
+documentation = "http://crhino.github.io/ferrous-docs/ferrous/index.html"
+
+readme = "./README.md"
+license = "Simplified BSD License"
+keywords = ["testing", "tests"]
+
 [dependencies]
 time = "^0.1"
