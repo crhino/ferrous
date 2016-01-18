@@ -9,7 +9,7 @@ repository = "https://github.com/crhino/ferrous"
 documentation = "http://crhino.github.io/ferrous-docs/ferrous/index.html"
 
 readme = "./README.md"
-license = "Simplified BSD License"
+license = "BSD-2-Clause"
 keywords = ["testing", "tests"]
 
 [dependencies]
