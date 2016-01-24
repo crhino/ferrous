@@ -1,5 +1,7 @@
 extern crate ferrous;
 
+mod boolean;
+
 use ferrous::dsl::*;
 
 #[derive(Debug, Clone, Eq, PartialEq)]

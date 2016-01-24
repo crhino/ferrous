@@ -118,3 +118,13 @@ pub fn be_ok() -> ResultMatcher {
 pub fn be_err() -> ResultMatcher {
     ResultMatcher::ErrMatch
 }
+
+/// Matcher that asserts a value is true.
+pub fn be_true() -> BooleanMatcher {
+    BooleanMatcher::TrueMatch
+}
+
+/// Matcher that asserts a value is false.
+pub fn be_false() -> BooleanMatcher {
+    BooleanMatcher::FalseMatch
+}

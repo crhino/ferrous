@@ -9,3 +9,6 @@ pub use self::option::*;
 
 pub mod result;
 pub use self::result::*;
+
+pub mod boolean;
+pub use self::boolean::*;
