@@ -11,7 +11,7 @@
 mod matchers;
 mod assertions;
 
-use time::Duration;
+use std::time::Duration;
 use dsl::assertions::*;
 use dsl::matchers::*;
 
@@ -62,7 +62,7 @@ pub fn expect<'a, A>(actual: &'a A) -> Expect<'a, A> {
 /// Asynchronous assertion that asserts the given closure **eventually** returns a value
 /// that satisfies the given matcher.
 pub fn eventually<F, A>(f: F) -> Async<A> where F: 'static + Fn() -> A {
-    let timeout = Duration::seconds(1);
+    let timeout = Duration::from_secs(1);
     eventually_with_timeout(timeout, f)
 }
 
@@ -75,7 +75,7 @@ pub fn eventually_with_timeout<F, A>(timeout: Duration, f: F)
 /// Asynchronous assertion that asserts the given closure **consistently** returns a value
 /// that satisfies the given matcher.
 pub fn consistently<F, A>(f: F) -> Async<A> where F: 'static + Fn() -> A {
-    let timeout = Duration::seconds(1);
+    let timeout = Duration::from_secs(1);
     consistently_with_timeout(timeout, f)
 }
 

@@ -1,5 +1,5 @@
 use dsl::{Assertion, Matcher};
-use time::{Duration, PreciseTime};
+use std::time::{Duration, Instant};
 use std::thread;
 
 pub struct Expect<'a, A: 'a> {
@@ -37,7 +37,7 @@ pub enum AsyncType {
 pub struct Async<A> {
     func: Box<Fn() -> A>,
     timeout: Duration,
-    polling_interval: u32,
+    polling_interval: Duration,
     async_type: AsyncType
 }
 
@@ -47,7 +47,7 @@ impl<A> Async<A> {
             Async {
                 func: Box::new(f),
                 timeout: timeout,
-                polling_interval: 10,
+                polling_interval: Duration::from_millis(10),
                 async_type: async_type,
             }
         }
@@ -114,13 +114,13 @@ impl<A> Async<A> {
 impl<A> Assertion<A> for Async<A> {
     fn to<M: Matcher<A>>(self, matcher: M) {
         let ref f = self.func;
-        let start = PreciseTime::now();
-        while start.to(PreciseTime::now()) < self.timeout {
+        let start = Instant::now();
+        while start.elapsed() < self.timeout {
             let actual = f();
             if self.check_match(&matcher, actual) {
                 return
             }
-            thread::sleep_ms(self.polling_interval);
+            thread::sleep(self.polling_interval);
         }
 
         let actual = f();
@@ -129,13 +129,13 @@ impl<A> Assertion<A> for Async<A> {
 
     fn not_to<M: Matcher<A>>(self, matcher: M) {
         let ref f = self.func;
-        let start = PreciseTime::now();
-        while start.to(PreciseTime::now()) < self.timeout {
+        let start = Instant::now();
+        while start.elapsed() < self.timeout {
             let actual = f();
             if self.check_negated_match(&matcher, actual) {
                 return
             }
-            thread::sleep_ms(self.polling_interval);
+            thread::sleep(self.polling_interval);
         }
 
         let actual = f();
@@ -146,9 +146,9 @@ impl<A> Assertion<A> for Async<A> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use time::Duration;
     use std::sync::{Arc};
     use std::sync::atomic::{AtomicBool, Ordering};
+    use std::time::Duration;
     use std::thread;
     use dsl::*;
 
@@ -157,7 +157,7 @@ mod tests {
 
     #[test]
     fn test_eventually() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let change = Arc::new(AtomicBool::new(false));
         let return_bool = change.clone();
         let assertion = Async::new(AsyncType::Eventual, timeout, move || {
@@ -169,7 +169,7 @@ mod tests {
         });
 
         let handle = thread::spawn(move || {
-            thread::sleep_ms(500);
+            thread::sleep(Duration::from_millis(500));
             change.store(true, Ordering::SeqCst);
         });
 
@@ -180,7 +180,7 @@ mod tests {
     #[test]
     #[should_panic(expected="expected Test(100) to equal Test(0)")]
     fn test_eventually_timeout() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let assertion = Async::new(AsyncType::Eventual, timeout, move || {
             Test(0)
         });
@@ -190,7 +190,7 @@ mod tests {
 
     #[test]
     fn test_eventually_negated() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let change = Arc::new(AtomicBool::new(false));
         let return_bool = change.clone();
         let assertion = Async::new(AsyncType::Eventual, timeout, move || {
@@ -202,7 +202,7 @@ mod tests {
         });
 
         let handle = thread::spawn(move || {
-            thread::sleep_ms(500);
+            thread::sleep(Duration::from_millis(500));
             change.store(true, Ordering::SeqCst);
         });
 
@@ -213,7 +213,7 @@ mod tests {
     #[test]
     #[should_panic(expected="expected Test(0) not to equal Test(0)")]
     fn test_eventually_negated_timeout() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let assertion = Async::new(AsyncType::Eventual, timeout, move || {
             Test(0)
         });
@@ -223,7 +223,7 @@ mod tests {
 
     #[test]
     fn test_consistently() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let assertion = Async::new(AsyncType::Consistent, timeout, move || {
             Test(100)
         });
@@ -234,7 +234,7 @@ mod tests {
     #[test]
     #[should_panic(expected="expected Test(100) to equal Test(0)")]
     fn test_consistently_fail() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let change = Arc::new(AtomicBool::new(true));
         let return_bool = change.clone();
         let assertion = Async::new(AsyncType::Consistent, timeout, move || {
@@ -246,7 +246,7 @@ mod tests {
         });
 
         let handle = thread::spawn(move || {
-            thread::sleep_ms(500);
+            thread::sleep(Duration::from_millis(500));
             change.store(false, Ordering::SeqCst);
         });
 
@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn test_consistently_negated() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let assertion = Async::new(AsyncType::Consistent, timeout, move || {
             Test(100)
         });
@@ -267,7 +267,7 @@ mod tests {
     #[test]
     #[should_panic(expected="expected Test(0) not to equal Test(0)")]
     fn test_consistently_negated_fail() {
-        let timeout = Duration::seconds(1);
+        let timeout = Duration::from_secs(1);
         let change = Arc::new(AtomicBool::new(false));
         let return_bool = change.clone();
         let assertion = Async::new(AsyncType::Consistent, timeout, move || {
@@ -279,7 +279,7 @@ mod tests {
         });
 
         let handle = thread::spawn(move || {
-            thread::sleep_ms(500);
+            thread::sleep(Duration::from_millis(500));
             change.store(true, Ordering::SeqCst);
         });
 
