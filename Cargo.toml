@@ -11,6 +11,3 @@ documentation = "http://crhino.github.io/ferrous-docs/ferrous/index.html"
 readme = "./README.md"
 license = "BSD-2-Clause"
 keywords = ["testing", "tests"]
-
-[dependencies]
-time = "^0.1"
